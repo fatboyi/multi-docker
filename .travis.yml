@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t fatboyi/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true fatboyi/react-test npm test 
+
+after_success:
+  - docker build -t fatboyi/multi-client ./client
+  - docker build -t fatboyi/multi-nginx ./nginx
+  - docker build -t fatboyi/multi-server ./server
+  - docker build -t fatboyi/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push fatboyi/multi-client
+  - docker push fatboyi/multi-nginx
+  - docker push fatboyi/multi-server
+  - docker push fatboyi/multi-worker
