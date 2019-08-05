@@ -21,6 +21,7 @@ after_success:
   - docker push fatboyi/multi-server
   - docker push fatboyi/multi-worker
 
+  
 deploy:
   provider: elasticbeanstalk
   region: us-east-1
